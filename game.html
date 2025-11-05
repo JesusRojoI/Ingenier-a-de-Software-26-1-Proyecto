@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Fraud Hunters - Juego</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos específicos para la página del juego */
+        .game-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary-light), var(--accent-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .levels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .level-card {
+            background-color: rgba(19, 47, 76, 0.7);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--primary-medium);
+        }
+
+        .level-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary-light);
+        }
+
+        .level-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .level-difficulty {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty-easy {
+            background-color: var(--accent-green);
+            color: white;
+        }
+
+        .difficulty-medium {
+            background-color: var(--accent-yellow);
+            color: black;
+        }
+
+        .difficulty-hard {
+            background-color: var(--accent-red);
+            color: white;
+        }
+
+        .game-info {
+            background-color: rgba(33, 79, 95, 0.3);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .back-button {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .levels-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container game-container">
+        <header class="game-header">
+            <h1 class="game-title">SELECCIONA UN NIVEL</h1>
+            <p>Elige el tipo de phishing que quieres practicar para comenzar tu entrenamiento</p>
+        </header>
+
+        <div class="levels-container">
+            <div class="level-card" onclick="startLevel('whatsapp')">
+                <div class="level-icon">📱</div>
+                <h3>WhatsApp Phishing</h3>
+                <div class="level-difficulty difficulty-easy">FÁCIL</div>
+                <p>Identifica mensajes fraudulentos en WhatsApp con enlaces sospechosos y ofertas falsas.</p>
+            </div>
+
+            <div class="level-card" onclick="startLevel('email')">
+                <div class="level-icon">✉️</div>
+                <h3>Correo Electrónico</h3>
+                <div class="level-difficulty difficulty-medium">MEDIO</div>
+                <p>Analiza correos bancarios falsos, facturas maliciosas y alertas de seguridad inventadas.</p>
+            </div>
+
+            <div class="level-card" onclick="startLevel('calls')">
+                <div class="level-icon">📞</div>
+                <h3>Llamadas Telefónicas</h3>
+                <div class="level-difficulty difficulty-hard">DIFÍCIL</div>
+                <p>Reconoce números internacionales sospechosos y patrones de engaño verbal.</p>
+            </div>
+
+            <div class="level-card" onclick="startLevel('web')">
+                <div class="level-icon">🌐</div>
+                <h3>Navegación Web</h3>
+                <div class="level-difficulty difficulty-medium">MEDIO</div>
+                <p>Detecta URLs fraudulentos, sitios falsos y técnicas de suplantación avanzadas.</p>
+            </div>
+        </div>
+
+        <div class="game-info">
+            <h2>Información del Juego</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-value">4</div>
+                    <div class="info-label">Niveles Diferentes</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-value">15+</div>
+                    <div class="info-label">Escenarios Reales</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-value">3</div>
+                    <div class="info-label">Niveles de Habilidad</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-value">100%</div>
+                    <div class="info-label">Gratuito</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="back-button">
+            <a href="index.html" class="btn">Volver a la Presentación</a>
+        </div>
+    </div>
+
+    <script>
+        function startLevel(level) {
+            alert(`¡Iniciando nivel de ${level.toUpperCase()}! En una implementación completa, esto cargaría el juego.`);
+            // Aquí iría la lógica para cargar el nivel seleccionado
+        }
+    </script>
+</body>
+</html>
