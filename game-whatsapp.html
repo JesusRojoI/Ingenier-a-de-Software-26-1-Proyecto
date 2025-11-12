@@ -14,6 +14,12 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             flex-direction: column;
+            position: relative;
+            transition: filter 0.5s ease;
+        }
+
+        .game-container.dimmed {
+            filter: brightness(50%);
         }
 
         .home-container {
@@ -46,32 +52,19 @@
             color: #5D7A8C;
         }
 
-        /* Modal de introducción del ladrón */
-        .thief-modal-overlay {
+        /* Ladrón posicionado a la derecha */
+        .thief-side-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .thief-modal {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 500px;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            z-index: 100;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
 
         .thief-character {
             position: relative;
-            margin-bottom: 2rem;
         }
 
         .thief-head {
@@ -79,63 +72,66 @@
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #2E86AB;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .thief-head.talking {
+            animation: headTalking 1s ease-in-out;
+        }
+
+        @keyframes headTalking {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-3deg) scale(1.05); }
+            50% { transform: rotate(2deg) scale(1.03); }
+            75% { transform: rotate(-2deg) scale(1.05); }
         }
 
         .speech-bubble {
             position: absolute;
-            top: -80px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: -220px;
+            top: 10px;
+            width: 200px;
             background: white;
-            padding: 1rem;
+            padding: 12px 15px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            max-width: 300px;
+            border: 2px solid #2E86AB;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         .speech-bubble::after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 10px 10px 0;
+            right: -10px;
+            top: 20px;
+            border-width: 8px 0 8px 10px;
             border-style: solid;
-            border-color: white transparent transparent;
+            border-color: transparent transparent transparent #2E86AB;
         }
 
-        .bubble-tail {
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid white;
+        .bubble-text {
+            font-size: 0.9rem;
+            line-height: 1.3;
+            color: #333;
+            margin: 0;
         }
 
-        .intro-controls {
-            margin-top: 1rem;
-        }
-
-        .continue-btn, .start-btn {
-            background: linear-gradient(to right, #2E86AB, #1B5E7D);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-family: 'Monomaniac One', sans-serif;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .continue-btn:hover, .start-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 134, 171, 0.4);
+        .click-hint {
+            font-size: 0.7rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+            text-align: center;
         }
 
         /* Juego principal */
@@ -149,6 +145,8 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 10;
         }
 
         .game-header {
@@ -309,7 +307,6 @@
         }
 
         .thief-character.defeated .thief-head {
-            border-color: #4CAF50;
             filter: grayscale(0.5);
         }
 
@@ -336,6 +333,30 @@
             font-size: 1.1rem;
             margin-top: 1rem;
         }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .thief-side-container {
+                right: 10px;
+                width: 180px;
+            }
+            
+            .thief-head {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .speech-bubble {
+                left: -180px;
+                width: 160px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .thief-side-container {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -346,23 +367,18 @@
         </a>
     </div>
 
-    <div class="game-container">
-        <!-- Modal de Introducción del Ladrón -->
-        <div class="thief-modal-overlay" id="thiefIntroduction">
-            <div class="thief-modal">
-                <div class="thief-character">
-                    <img src="imgs/principal.png" alt="Ladrón Phisher" class="thief-head">
-                    <div class="speech-bubble" id="speechBubble">
-                        <p id="thiefMessage">¡Je je je! Bienvenido, ingenuo...</p>
-                        <div class="bubble-tail"></div>
-                    </div>
-                </div>
-                <div class="intro-controls">
-                    <button id="continueBtn" class="continue-btn">Siguiente</button>
-                </div>
+    <!-- Ladrón a la derecha -->
+    <div class="thief-side-container">
+        <div class="thief-character">
+            <img src="imgs/principalIcon.svg" alt="Ladrón Phisher" class="thief-head" id="thiefHead">
+            <div class="speech-bubble" id="speechBubble">
+                <p class="bubble-text" id="thiefMessage">¡Je je je! Bienvenido, ingenuo...</p>
+                <div class="click-hint">(Toca para continuar)</div>
             </div>
         </div>
+    </div>
 
+    <div class="game-container" id="gameContainer">
         <!-- Juego Principal (oculto inicialmente) -->
         <div class="game-main" id="gameMain">
             <div class="game-header">
@@ -390,9 +406,9 @@
         <div class="end-game-modal" id="endGameModal">
             <div class="end-game-content">
                 <div class="thief-character defeated">
-                    <img src="imgs/principal-defeated.png" alt="Ladrón Derrotado" class="thief-head">
-                    <div class="speech-bubble">
-                        <p id="defeatMessage">¡Maldición! Eres más listo de lo que pensaba...</p>
+                    <img src="imgs/principalIcon.svg" alt="Ladrón Derrotado" class="thief-head">
+                    <div class="speech-bubble show">
+                        <p class="bubble-text" id="defeatMessage">¡Maldición! Eres más listo de lo que pensaba...</p>
                     </div>
                 </div>
                 <h2>¡Has Derrotado al Phisher!</h2>

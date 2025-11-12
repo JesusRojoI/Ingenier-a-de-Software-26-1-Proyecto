@@ -1,4 +1,4 @@
-// js/whatsapp-game.js
+// js/whatsapp-game.js - Versión con efectos visuales
 
 class WhatsAppGame {
     constructor() {
@@ -6,9 +6,10 @@ class WhatsAppGame {
         this.timeLeft = 180; // 3 minutos
         this.thiefSuspicion = 0;
         this.chatHistory = [];
-        this.currentDialogueIndex = 0;
         this.gameActive = false;
         this.timerInterval = null;
+        this.currentDialogueIndex = 0;
+        this.isTalking = false;
         
         // Diálogo de introducción del ladrón
         this.introductionDialogue = [
@@ -66,49 +67,92 @@ class WhatsAppGame {
 
     initializeGame() {
         this.setupEventListeners();
-        this.showIntroduction();
+        this.startIntroduction();
     }
 
     setupEventListeners() {
-        document.getElementById('continueBtn').addEventListener('click', () => this.nextIntroductionMessage());
+        // Evento para hacer clic en la burbuja de diálogo
+        document.getElementById('speechBubble').addEventListener('click', () => this.nextDialogue());
         document.getElementById('sendButton').addEventListener('click', () => this.sendPlayerMessage());
         document.getElementById('playerInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.sendPlayerMessage();
         });
     }
 
-    showIntroduction() {
-        document.getElementById('thiefIntroduction').style.display = 'flex';
-        this.updateThiefMessage(this.introductionDialogue[0]);
+    startIntroduction() {
+        // Oscurecer la pantalla
+        document.getElementById('gameContainer').classList.add('dimmed');
+        
+        // Mostrar primer mensaje
+        this.showDialogueMessage(this.introductionDialogue[0]);
     }
 
-    nextIntroductionMessage() {
-        this.currentDialogueIndex++;
+    showDialogueMessage(message) {
+        if (this.isTalking) return;
         
-        if (this.currentDialogueIndex < this.introductionDialogue.length) {
-            this.updateThiefMessage(this.introductionDialogue[this.currentDialogueIndex]);
-        } else {
-            this.startGame();
-        }
+        this.isTalking = true;
+        const bubble = document.getElementById('speechBubble');
+        const messageElement = document.getElementById('thiefMessage');
+        const head = document.getElementById('thiefHead');
+        
+        // Iniciar animación de "hablando"
+        head.classList.add('talking');
+        
+        // Mostrar mensaje después de un pequeño delay
+        setTimeout(() => {
+            messageElement.textContent = message;
+            bubble.classList.add('show');
+            this.isTalking = false;
+        }, 500);
     }
 
-    updateThiefMessage(message) {
-        document.getElementById('thiefMessage').textContent = message;
+    nextDialogue() {
+        if (this.isTalking) return;
         
-        // Cambiar texto del botón si es el último mensaje
-        if (this.currentDialogueIndex === this.introductionDialogue.length - 1) {
-            document.getElementById('continueBtn').textContent = '¡Atrévete a Jugarme!';
-        }
+        const bubble = document.getElementById('speechBubble');
+        const head = document.getElementById('thiefHead');
+        
+        // Ocultar burbuja actual
+        bubble.classList.remove('show');
+        
+        // Reiniciar animación
+        head.classList.remove('talking');
+        
+        setTimeout(() => {
+            this.currentDialogueIndex++;
+            
+            if (this.currentDialogueIndex < this.introductionDialogue.length) {
+                // Mostrar siguiente mensaje
+                this.showDialogueMessage(this.introductionDialogue[this.currentDialogueIndex]);
+            } else {
+                // Finalizar introducción y comenzar juego
+                this.endIntroduction();
+            }
+        }, 300);
+    }
+
+    endIntroduction() {
+        // Quitar obscurecimiento
+        document.getElementById('gameContainer').classList.remove('dimmed');
+        
+        // Ocultar burbuja final
+        const bubble = document.getElementById('speechBubble');
+        bubble.classList.remove('show');
+        
+        // Mostrar juego principal
+        document.getElementById('gameMain').style.display = 'flex';
+        
+        // Iniciar juego
+        setTimeout(() => this.startGame(), 1000);
     }
 
     startGame() {
-        document.getElementById('thiefIntroduction').style.display = 'none';
-        document.getElementById('gameMain').style.display = 'flex';
-        
         this.gameActive = true;
         this.startTimer();
         this.generateSmartResponses();
-        this.thiefSendMessage();
+        
+        // Primer mensaje del ladrón en el chat
+        setTimeout(() => this.thiefSendMessage(), 1000);
     }
 
     startTimer() {
@@ -121,7 +165,7 @@ class WhatsAppGame {
             }
             
             // El ladrón envía mensajes periódicamente
-            if (this.timeLeft % 30 === 0 && this.gameActive) {
+            if (this.timeLeft % 25 === 0 && this.gameActive) {
                 setTimeout(() => this.thiefSendMessage(), 2000);
             }
         }, 1000);
@@ -237,11 +281,6 @@ class WhatsAppGame {
         
         this.score += points;
         this.updateScoreDisplay();
-        
-        // Feedback visual
-        if (points > 0) {
-            this.showFeedback('+', points);
-        }
     }
 
     analyzeCustomResponse(message) {
@@ -259,11 +298,6 @@ class WhatsAppGame {
         });
         
         return riskScore > 0 ? -riskScore : 50;
-    }
-
-    showFeedback(type, points) {
-        // Implementar feedback visual de puntos
-        console.log(`${type}${points} puntos`);
     }
 
     updateScoreDisplay() {
