@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Fraud Hunters - WhatsApp Phishing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Estilos específicos para el juego WhatsApp */
+        .game-container {
+            min-height: 100vh;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .home-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .home-button {
+            background: rgba(255,255,255,0.9);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .home-button:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .home-icon {
+            font-size: 1.5rem;
+            color: #5D7A8C;
+        }
+
+        /* Modal de introducción del ladrón */
+        .thief-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .thief-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .thief-character {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .thief-head {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #2E86AB;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 300px;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent transparent;
+        }
+
+        .bubble-tail {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+
+        .intro-controls {
+            margin-top: 1rem;
+        }
+
+        .continue-btn, .start-btn {
+            background: linear-gradient(to right, #2E86AB, #1B5E7D);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-family: 'Monomaniac One', sans-serif;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .continue-btn:hover, .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 134, 171, 0.4);
+        }
+
+        /* Juego principal */
+        .game-main {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .game-header {
+            background: #075e54;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score, .timer, .suspicion-meter {
+            font-family: 'Monomaniac One', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .timer.time-warning {
+            color: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .whatsapp-chat {
+            flex: 1;
+            padding: 1rem;
+            background: #e5ddd5;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+        }
+
+        .message.thief {
+            justify-content: flex-start;
+        }
+
+        .message.player {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.8rem 1rem;
+            border-radius: 7.5px;
+            position: relative;
+        }
+
+        .message.thief .message-bubble {
+            background: white;
+            border-top-left-radius: 0;
+        }
+
+        .message.player .message-bubble {
+            background: #dcf8c6;
+            border-top-right-radius: 0;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: #999;
+            text-align: right;
+            margin-top: 0.3rem;
+        }
+
+        .player-options {
+            padding: 1rem;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
+        }
+
+        .quick-responses {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .response-btn {
+            padding: 0.8rem;
+            border: 2px solid #075e54;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .response-btn.low-risk {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .response-btn.medium-risk {
+            border-color: #FF9800;
+            color: #FF9800;
+        }
+
+        .response-btn.high-risk {
+            border-color: #F44336;
+            color: #F44336;
+        }
+
+        .response-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .custom-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .custom-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .custom-input button {
+            background: #075e54;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        /* Final del juego */
+        .end-game-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .end-game-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .thief-character.defeated .thief-head {
+            border-color: #4CAF50;
+            filter: grayscale(0.5);
+        }
+
+        .final-score {
+            font-size: 2rem;
+            font-family: 'Monomaniac One', sans-serif;
+            color: #1B5E7D;
+            margin: 1rem 0;
+        }
+
+        .performance-breakdown {
+            text-align: left;
+            margin: 1rem 0;
+        }
+
+        .play-again-btn {
+            background: linear-gradient(to right, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-family: 'Monomaniac One', sans-serif;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón Home -->
+    <div class="home-container">
+        <a href="game.html" class="home-button">
+            <i class="bi bi-arrow-left home-icon"></i>
+        </a>
+    </div>
+
+    <div class="game-container">
+        <!-- Modal de Introducción del Ladrón -->
+        <div class="thief-modal-overlay" id="thiefIntroduction">
+            <div class="thief-modal">
+                <div class="thief-character">
+                    <img src="imgs/principal.png" alt="Ladrón Phisher" class="thief-head">
+                    <div class="speech-bubble" id="speechBubble">
+                        <p id="thiefMessage">¡Je je je! Bienvenido, ingenuo...</p>
+                        <div class="bubble-tail"></div>
+                    </div>
+                </div>
+                <div class="intro-controls">
+                    <button id="continueBtn" class="continue-btn">Siguiente</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Juego Principal (oculto inicialmente) -->
+        <div class="game-main" id="gameMain">
+            <div class="game-header">
+                <div class="score" id="scoreDisplay">Puntuación: 1000</div>
+                <div class="timer" id="timerDisplay">⏱️ 03:00</div>
+                <div class="suspicion-meter" id="suspicionDisplay">Sospecha: 0%</div>
+            </div>
+
+            <div class="whatsapp-chat" id="chatContainer">
+                <!-- Los mensajes se insertarán aquí dinámicamente -->
+            </div>
+
+            <div class="player-options">
+                <div class="quick-responses" id="quickResponses">
+                    <!-- Las respuestas rápidas se insertarán aquí -->
+                </div>
+                <div class="custom-input">
+                    <input type="text" id="playerInput" placeholder="Escribe tu respuesta...">
+                    <button id="sendButton">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla Final -->
+        <div class="end-game-modal" id="endGameModal">
+            <div class="end-game-content">
+                <div class="thief-character defeated">
+                    <img src="imgs/principal-defeated.png" alt="Ladrón Derrotado" class="thief-head">
+                    <div class="speech-bubble">
+                        <p id="defeatMessage">¡Maldición! Eres más listo de lo que pensaba...</p>
+                    </div>
+                </div>
+                <h2>¡Has Derrotado al Phisher!</h2>
+                <div class="final-score" id="finalScore">Puntuación: 0</div>
+                <div class="performance-breakdown" id="performanceBreakdown">
+                    <!-- Estadísticas se insertarán aquí -->
+                </div>
+                <button class="play-again-btn" onclick="playAgain()">Jugar Otra Vez</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/whatsapp-game.js"></script>
+</body>
+</html>
