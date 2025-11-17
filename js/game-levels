@@ -43,4 +43,160 @@ class GameLevelsManager {
         document.addEventListener('click', (e) => {
             const modal = document.getElementById('demoWarningModal');
             if (e.target === modal) {
-                this.closeDemoWarning
+                this.closeDemoWarning();
+            }
+        });
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeDemoWarning();
+            }
+        });
+    }
+
+    showDemoWarning(level) {
+        const levelNames = {
+            'calls': 'Llamadas Telefónicas', 
+            'web': 'Navegación Web',
+            'sms': 'Mensajes SMS'
+        };
+
+        const levelName = levelNames[level] || level;
+        
+        const modalHTML = `
+            <div class="demo-modal-overlay" id="demoWarningModal">
+                <div class="demo-modal-content">
+                    <i class="bi bi-hourglass-split demo-modal-icon"></i>
+                    <h2 class="demo-modal-title">¡CONTENIDO NO DISPONIBLE!</h2>
+                    <p class="demo-modal-text">
+                        El nivel <strong>${levelName}</strong> no está disponible en la versión demo del juego.
+                    </p>
+                    
+                    <div class="demo-features-list">
+                        <h4>🚧 EN CONSTRUCCIÓN 🚧</h4>
+                        <ul>
+                            <li>🔒 Escenarios realistas de ${levelName.toLowerCase()}</li>
+                            <li>🎯 Mecánicas de juego únicas</li>
+                            <li>🏆 Sistema de puntuación avanzado</li>
+                            <li>🎮 Retos y desafíos especiales</li>
+                        </ul>
+                    </div>
+
+                    <p class="demo-modal-text">
+                        <strong>¡Prueba nuestros niveles disponibles!</strong>
+                    </p>
+
+                    <div class="demo-modal-buttons">
+                        <button class="whatsapp-available-btn" onclick="redirectToWhatsApp()">
+                            <i class="bi bi-whatsapp"></i> WHATSAPP
+                        </button>
+                        <button class="email-available-btn" onclick="redirectToEmail()">
+                            <i class="bi bi-envelope"></i> CORREO
+                        </button>
+                        <button class="demo-close-btn" onclick="gameLevelsManager.closeDemoWarning()">
+                            <i class="bi bi-x-circle"></i> CERRAR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remover modal existente si hay uno
+        const existingModal = document.getElementById('demoWarningModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Agregar nuevo modal
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Agregar estilos para el botón de email
+        const style = document.createElement('style');
+        style.textContent = `
+            .email-available-btn {
+                background: linear-gradient(to right, #0078D4, #106EBE);
+                color: white;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 25px;
+                font-family: 'Monomaniac One', sans-serif;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 1rem;
+            }
+            .email-available-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 120, 212, 0.4);
+            }
+            .demo-modal-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Mostrar modal con animación
+        setTimeout(() => {
+            const modal = document.getElementById('demoWarningModal');
+            modal.style.display = 'flex';
+        }, 50);
+    }
+
+    closeDemoWarning() {
+        const modal = document.getElementById('demoWarningModal');
+        if (modal) {
+            modal.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                modal.remove();
+            }, 250);
+        }
+    }
+
+    // Verificar si un nivel está disponible
+    isLevelAvailable(level) {
+        return this.availableLevels.includes(level);
+    }
+}
+
+// Función global para redirigir a WhatsApp (nivel disponible)
+function redirectToWhatsApp() {
+    window.location.href = 'game-whatsapp.html';
+}
+
+// Función global para redirigir a Email (nivel disponible)
+function redirectToEmail() {
+    window.location.href = 'game-email.html';
+}
+
+// Función global startLevel modificada
+function startLevel(level) {
+    if (gameLevelsManager.isLevelAvailable(level)) {
+        const gamePages = {
+            'whatsapp': 'game-whatsapp.html',
+            'email': 'game-email.html'
+        };
+        window.location.href = gamePages[level];
+    } else {
+        gameLevelsManager.showDemoWarning(level);
+    }
+}
+
+// Inicializar el manager cuando se carga la página
+let gameLevelsManager;
+
+document.addEventListener('DOMContentLoaded', () => {
+    gameLevelsManager = new GameLevelsManager();
+});
+
+// Agregar animación de fadeOut al CSS global
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
