@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Credit Fraud Hunters - WhatsApp Phishing</title>
+    <title>Credit Fraud Hunters - Email Phishing</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* Estilos específicos para el juego WhatsApp */
+        /* Estilos específicos para el juego Email */
         .game-container {
             min-height: 100vh;
             padding: 1rem;
@@ -139,7 +139,7 @@
             display: none;
             flex: 1;
             flex-direction: column;
-            max-width: 400px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -150,7 +150,7 @@
         }
 
         .game-header {
-            background: #075e54;
+            background: #0078D4;
             color: white;
             padding: 1rem;
             display: flex;
@@ -174,49 +174,139 @@
             100% { opacity: 1; }
         }
 
-        .whatsapp-chat {
+        /* Cliente de Email */
+        .email-client {
             flex: 1;
-            padding: 1rem;
-            background: #e5ddd5;
-            overflow-y: auto;
-            max-height: 60vh;
-        }
-
-        .message {
-            margin-bottom: 1rem;
+            background: #f3f2f1;
             display: flex;
+            flex-direction: column;
+            height: 60vh;
         }
 
-        .message.thief {
-            justify-content: flex-start;
+        .email-toolbar {
+            background: #faf9f8;
+            padding: 1rem;
+            border-bottom: 1px solid #e1dfdd;
+            display: flex;
+            gap: 0.5rem;
         }
 
-        .message.player {
-            justify-content: flex-end;
-        }
-
-        .message-bubble {
-            max-width: 70%;
-            padding: 0.8rem 1rem;
-            border-radius: 7.5px;
-            position: relative;
-        }
-
-        .message.thief .message-bubble {
+        .toolbar-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d2d0ce;
             background: white;
-            border-top-left-radius: 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .message.player .message-bubble {
-            background: #dcf8c6;
-            border-top-right-radius: 0;
+        .toolbar-btn:hover {
+            background: #f3f2f1;
         }
 
-        .message-time {
-            font-size: 0.7rem;
-            color: #999;
+        .email-list {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .email-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e1dfdd;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .email-item:hover {
+            background: #faf9f8;
+        }
+
+        .email-item.active {
+            background: #edebe9;
+            border-left: 4px solid #0078D4;
+        }
+
+        .email-sender {
+            font-weight: bold;
+            color: #323130;
+            margin-bottom: 0.3rem;
+        }
+
+        .email-subject {
+            color: #323130;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .email-preview {
+            color: #605e5c;
+            font-size: 0.9rem;
+        }
+
+        .email-time {
+            color: #8a8886;
+            font-size: 0.8rem;
             text-align: right;
-            margin-top: 0.3rem;
+        }
+
+        /* Vista de Email */
+        .email-view {
+            display: none;
+            flex: 1;
+            background: white;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .email-header {
+            border-bottom: 1px solid #e1dfdd;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .email-from {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .email-address {
+            color: #605e5c;
+            font-size: 0.9rem;
+        }
+
+        .email-subject-view {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #323130;
+            margin: 1rem 0;
+        }
+
+        .email-body {
+            line-height: 1.6;
+            color: #323130;
+            white-space: pre-line;
+        }
+
+        .email-attachment {
+            background: #faf9f8;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            border: 1px solid #e1dfdd;
+        }
+
+        .attachment-icon {
+            font-size: 1.5rem;
+            color: #d83b01;
+            margin-right: 0.5rem;
+        }
+
+        .suspicious-element {
+            background: #fff4ce;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            border-left: 3px solid #ffb900;
         }
 
         .player-options {
@@ -227,14 +317,14 @@
 
         .quick-responses {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.5rem;
             margin-bottom: 1rem;
         }
 
         .response-btn {
             padding: 0.8rem;
-            border: 2px solid #075e54;
+            border: 2px solid #0078D4;
             border-radius: 25px;
             background: white;
             cursor: pointer;
@@ -260,28 +350,6 @@
         .response-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-
-        .custom-input {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .custom-input input {
-            flex: 1;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 25px;
-            outline: none;
-        }
-
-        .custom-input button {
-            background: #075e54;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            cursor: pointer;
         }
 
         /* Final del juego */
@@ -356,6 +424,14 @@
             .thief-side-container {
                 display: none;
             }
+            
+            .quick-responses {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-main {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -370,9 +446,9 @@
     <!-- Ladrón a la derecha -->
     <div class="thief-side-container">
         <div class="thief-character">
-            <img src="assets/images/principalIcon.svg" alt="Ladrón Phisher" class="thief-head" id="thiefHead">
+            <img src="assets/images/carceleroIcon.svg" alt="Ladrón Phisher" class="thief-head" id="thiefHead">
             <div class="speech-bubble" id="speechBubble">
-                <p class="bubble-text" id="thiefMessage">¡Je je je! Bienvenido, ingenuo...</p>
+                <p class="bubble-text" id="thiefMessage">¡Je je je! Bienvenido al mundo del email phishing...</p>
                 <div class="click-hint">(Toca para continuar)</div>
             </div>
         </div>
@@ -387,17 +463,31 @@
                 <div class="suspicion-meter" id="suspicionDisplay">Sospecha: 0%</div>
             </div>
 
-            <div class="whatsapp-chat" id="chatContainer">
-                <!-- Los mensajes se insertarán aquí dinámicamente -->
+            <div class="email-client">
+                <div class="email-toolbar">
+                    <button class="toolbar-btn" onclick="emailGame.markAsSpam()">
+                        <i class="bi bi-flag"></i> Marcar como Spam
+                    </button>
+                    <button class="toolbar-btn" onclick="emailGame.reportPhishing()">
+                        <i class="bi bi-shield-exclamation"></i> Reportar Phishing
+                    </button>
+                    <button class="toolbar-btn" onclick="emailGame.verifySender()">
+                        <i class="bi bi-search"></i> Verificar Remitente
+                    </button>
+                </div>
+
+                <div class="email-list" id="emailList">
+                    <!-- Los emails se insertarán aquí dinámicamente -->
+                </div>
+
+                <div class="email-view" id="emailView">
+                    <!-- Vista individual del email -->
+                </div>
             </div>
 
             <div class="player-options">
                 <div class="quick-responses" id="quickResponses">
                     <!-- Las respuestas rápidas se insertarán aquí -->
-                </div>
-                <div class="custom-input">
-                    <input type="text" id="playerInput" placeholder="Escribe tu respuesta...">
-                    <button id="sendButton">Enviar</button>
                 </div>
             </div>
         </div>
@@ -406,8 +496,7 @@
         <div class="end-game-modal" id="endGameModal">
             <div class="end-game-content">
                 <div class="thief-character defeated">
-                    <img src="assets/images/principalIcon.svg" alt="Ladrón Derrotado" class="thief-head">
-
+                    <img src="assets/images/carceleroIcon.svg" alt="Ladrón Derrotado" class="thief-head">
                     <div class="speech-bubble show">
                         <p class="bubble-text" id="defeatMessage">¡Maldición! Eres más listo de lo que pensaba...</p>
                     </div>
@@ -422,6 +511,6 @@
         </div>
     </div>
 
-    <script src="js/whatsapp-game.js"></script>
+    <script src="js/email-game.js"></script>
 </body>
 </html>

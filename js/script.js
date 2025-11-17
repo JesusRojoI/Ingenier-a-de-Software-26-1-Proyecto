@@ -3,11 +3,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Configuración de los ladrones disponibles (usando los nombres reales)
     const thieves = [
-        'imgs/carcelero.png',
-        'imgs/gordo.png', 
-        'imgs/kid.png',
-        'imgs/principal.png',
-        'imgs/repartidor.png'
+        'assets/images/carcelero.png',
+        'assets/images/gordo.png', 
+        'assets/images/kid.png',
+        'assets/images/principal.png',
+        'assets/images/repartidor.png'
     ];
     
     // Obtener todas las secciones

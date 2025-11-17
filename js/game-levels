@@ -1,0 +1,46 @@
+// js/game-levels.js - Gestión de niveles disponibles y no disponibles (ACTUALIZADO)
+
+class GameLevelsManager {
+    constructor() {
+        this.availableLevels = ['whatsapp', 'email']; // WhatsApp y Email disponibles
+        this.disabledLevels = ['calls', 'web', 'sms']; // Otros niveles no disponibles
+        
+        this.initializeLevels();
+        this.setupEventListeners();
+    }
+
+    initializeLevels() {
+        // Marcar niveles como deshabilitados
+        this.disabledLevels.forEach(level => {
+            const levelCard = document.querySelector(`.level-card button[onclick="startLevel('${level}')]`)
+                                ?.closest('.level-card');
+            if (levelCard) {
+                levelCard.classList.add('disabled');
+                
+                // Reemplazar el botón original
+                const originalButton = levelCard.querySelector('.play-level-btn');
+                if (originalButton) {
+                    originalButton.onclick = () => this.showDemoWarning(level);
+                }
+                
+                // También deshabilitar el icono de información
+                const infoIcon = levelCard.querySelector('.level-icon-corner');
+                if (infoIcon) {
+                    infoIcon.onclick = () => this.showDemoWarning(level);
+                }
+            }
+        });
+
+        // Habilitar el nivel de email (remover clase disabled si existe)
+        const emailCard = document.querySelector('.level-card button[onclick="startLevel(\'email\')"]')?.closest('.level-card');
+        if (emailCard) {
+            emailCard.classList.remove('disabled');
+        }
+    }
+
+    setupEventListeners() {
+        // Cerrar modal al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('demoWarningModal');
+            if (e.target === modal) {
+                this.closeDemoWarning
