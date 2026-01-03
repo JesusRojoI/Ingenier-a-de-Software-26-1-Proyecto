@@ -203,38 +203,26 @@ class WhatsAppGame {
     // ========== RESPUESTAS RÁPIDAS ==========
 
     generateSmartResponses() {
-        const quickResponsesData = [
-            { text: "❌ No me interesa", safe: true },
-            { text: "❓ ¿Quién eres?", neutral: true },
-            { text: "🔍 Voy a verificar esto", safe: true },
-            { text: "💬 Cuéntame más", dangerous: true },
-            { text: "🚫 No comparto datos", safe: true },
-            { text: "✅ ¿Qué necesitas?", dangerous: true }
-        ];
-        
         const container = document.getElementById('quickResponses');
         if (!container) return;
-        
+
+        const responses = this.chatbot.getSuggestedResponses();
         container.innerHTML = '';
-        
-        // Mezclar y tomar 4 respuestas
-        const shuffled = quickResponsesData.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 4);
-        
-        selected.forEach(response => {
+
+        responses.forEach(response => {
             const button = document.createElement('button');
             button.className = 'response-btn';
-            
-            if (response.safe) {
+
+            if (response.type === 'safe') {
                 button.classList.add('low-risk');
-            } else if (response.dangerous) {
+            } else if (response.type === 'dangerous') {
                 button.classList.add('high-risk');
             } else {
                 button.classList.add('medium-risk');
             }
-            
+
             button.textContent = response.text;
-            button.onclick = () => this.sendQuickResponse(response.text);
+            button.onclick = () => this.processPlayerResponse(response.text);
             container.appendChild(button);
         });
     }
@@ -277,6 +265,7 @@ class WhatsAppGame {
         // Respuesta del bot después de un delay
         setTimeout(() => {
             this.addMessageToChat('thief', result.botMessage);
+            this.generateSmartResponses();
             
             // Verificar estado del juego
             if (result.gameStatus.status !== 'ongoing') {
@@ -349,18 +338,26 @@ class WhatsAppGame {
         const defeatMessage = document.getElementById('defeatMessage');
         const finalScore = document.getElementById('finalScore');
         const performance = document.getElementById('performanceBreakdown');
+        const endGameTitle = document.getElementById('endGameTitle');
         
         if (!endModal || !defeatMessage || !finalScore || !performance) return;
         
-        // Configurar mensaje según el resultado
+        // Configurar mensaje y título según el resultado
         if (gameStatus.status === 'victory') {
-            defeatMessage.textContent = "¡Increíble! No pudiste ser engañado... Eres un experto en seguridad digital.";
-        } else if (gameStatus.status === 'defeat') {
-            defeatMessage.textContent = "Caíste en mi trampa... Pero has aprendido mucho en el proceso.";
-        } else if (gameStatus.status === 'timeout') {
-            defeatMessage.textContent = "El tiempo se agotó, pero demostraste ser cauteloso.";
-        } else {
-            defeatMessage.textContent = "Completaste todas las interacciones. ¡Bien hecho!";
+            endGameTitle.textContent = '¡Has Derrotado al Phisher!';
+            defeatMessage.textContent = '¡Increíble! No pudiste ser engañado... Eres un experto en seguridad digital.';
+        } 
+        else if (gameStatus.status === 'defeat') {
+            endGameTitle.textContent = 'Has sido Estafado';
+            defeatMessage.textContent = 'Caíste en mi trampa... Pero has aprendido mucho en el proceso.';
+        } 
+        else if (gameStatus.status === 'timeout') {
+            endGameTitle.textContent = 'Se Acabó el Tiempo';
+            defeatMessage.textContent = 'El tiempo se agotó, pero demostraste ser cauteloso.';
+        } 
+        else {
+            endGameTitle.textContent = 'Juego Completado';
+            defeatMessage.textContent = 'Completaste todas las interacciones. ¡Bien hecho!';
         }
         
         finalScore.textContent = `Puntuación Final: ${gameState.score}`;

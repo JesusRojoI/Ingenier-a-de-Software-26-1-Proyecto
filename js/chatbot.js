@@ -396,6 +396,54 @@ class PhishingChatbot {
         
         this.initializeConversation();
     }
+
+    getSuggestedResponses() {
+        const state = this.currentState;
+
+        const responseMap = {
+            presentacion: [
+                { text: "¿Quién eres?", type: "neutral" },
+                { text: "No me interesa", type: "safe" },
+                { text: "Cuéntame más", type: "dangerous" }
+            ],
+
+            verificacion_justificacion: [
+                { text: "¿Cómo puedo verificar esto?", type: "neutral" },
+                { text: "No voy a compartir información", type: "safe" },
+                { text: "¿Qué necesitas?", type: "dangerous" }
+            ],
+
+            verificacion_presion: [
+                { text: "Esto suena sospechoso", type: "safe" },
+                { text: "¿Por qué tanta urgencia?", type: "neutral" },
+                { text: "Está bien, dime qué hacer", type: "dangerous" }
+            ],
+
+            verificacion_urgencia: [
+                { text: "Voy a contactar a WhatsApp directamente", type: "safe" },
+                { text: "¿Qué pasa si no respondo?", type: "neutral" },
+                { text: "Ok, mándame el código", type: "dangerous" }
+            ],
+
+            verificacion_datos: [
+                { text: "No comparto códigos", type: "safe" },
+                { text: "¿Para qué lo necesitas?", type: "neutral" },
+                { text: "Mi código es...", type: "dangerous" }
+            ],
+
+            solicitud_datos_sensibles: [
+                { text: "Esto es una estafa", type: "safe" },
+                { text: "No entiendo", type: "neutral" },
+                { text: "Aquí tienes mis datos", type: "dangerous" }
+            ]
+        };
+
+        return responseMap[state] || [
+            { text: "No me interesa", type: "safe" },
+            { text: "¿Qué es esto?", type: "neutral" },
+            { text: "Cuéntame más", type: "dangerous" }
+        ];
+    }
     
     // ========== INICIALIZACIÓN ==========
     
