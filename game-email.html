@@ -37,26 +37,24 @@
             </div>
 
             <div class="email-client">
-                <div class="email-toolbar">
-                    <button class="toolbar-btn" onclick="emailGame.markAsSpam()">
-                        <i class="bi bi-flag"></i> Marcar como Spam
-                    </button>
-                    <button class="toolbar-btn" onclick="emailGame.reportPhishing()">
-                        <i class="bi bi-shield-exclamation"></i> Reportar Phishing
-                    </button>
-                    <button class="toolbar-btn" onclick="emailGame.verifySender()">
-                        <i class="bi bi-search"></i> Verificar Remitente
-                    </button>
-                </div>
 
-                <div class="email-list" id="emailList">
-                    <!-- Los emails se insertarán aquí dinámicamente -->
-                </div>
-
-                <div class="email-view" id="emailView">
-                    <!-- Vista individual del email -->
-                </div>
+            <!-- Encabezado Bandeja -->
+            <div class="email-inbox-header" id="inboxHeader">
+                📥 Bandeja de entrada
             </div>
+
+            <div class="email-toolbar">
+                ...
+            </div>
+
+            <div class="email-list" id="emailList">
+                <!-- Los emails se insertarán aquí dinámicamente -->
+            </div>
+
+            <div class="email-view" id="emailView">
+                <!-- Vista individual del email -->
+            </div>
+        </div>
 
             <div class="player-options">
                 <div class="quick-responses" id="quickResponses">
@@ -74,7 +72,7 @@
                         <p class="bubble-text" id="defeatMessage">¡Maldición! Eres más listo de lo que pensaba...</p>
                     </div>
                 </div>
-                <h2>¡Has Derrotado al Phisher!</h2>
+                <h2 id="endTitle">¡Has Derrotado al Phisher!</h2>
                 <div class="final-score" id="finalScore">Puntuación: 0</div>
                 <div class="performance-breakdown" id="performanceBreakdown">
                     <!-- Estadísticas se insertarán aquí -->

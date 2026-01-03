@@ -430,6 +430,14 @@
   margin-top: 1rem;
 }
 
+.email-inbox-header {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 1rem;
+    background: #f5f6f8;
+    border-bottom: 1px solid #ddd;
+}
+
 /* ================================
    RESPONSIVE
    ================================ */
